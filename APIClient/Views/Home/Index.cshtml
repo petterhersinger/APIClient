@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Välkommen till Annonssystemet";
+}
+
+<div class="container">
+    <h2>Välkommen till Annonssystemet</h2>
+    <p>Annonserar du som företag eller prenumerant?</p>
+
+    <form asp-controller="Home" asp-action="ChooseRole" method="post">
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="role" value="foretag" id="foretagRadio" required />
+                <label class="form-check-label" for="foretagRadio">
+                    Företag
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="role" value="prenumerant" id="prenumerantRadio" required />
+                <label class="form-check-label" for="prenumerantRadio">
+                    Prenumerant
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Välj</button>
+        </div>
+    </form>
+</div>

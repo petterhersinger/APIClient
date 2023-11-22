@@ -1,0 +1,40 @@
+﻿@model APIClient.Models.PrenumerantModel
+
+@{
+    ViewData["Title"] = "Hämta prenumerant";
+}
+
+<div class="container">
+    <h2>Hämta prenumerant</h2>
+
+    <form asp-controller="Home" asp-action="GetSubscriber" method="get">
+        <div class="form-group">
+            <label for="prenumerantId">Prenumerationsnummer:</label>
+            <input type="text" id="prenumerantId" name="prenumerantId" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Hämta</button>
+        </div>
+    </form>
+
+    @if (Model != null)
+    {
+        <h3>Prenumerantens uppgifter:</h3>
+        <ul>
+            <li>Namn: @Model.Fornamn @Model.Efternamn</li>
+            <li>Telefonnummer: @Model.Telefonnummer</li>
+            <li>Utdelningsadress: @Model.Utdelningsadress</li>
+            <li>Postnummer: @Model.Postnummer</li>
+            <li>Ort: @Model.Ort</li>
+        </ul>
+
+        <form asp-controller="Home" asp-action="CreateSubscriberAdvertiser" method="get">
+            <input type="hidden" name="prenumerantId" value="@Model.Prenumerationsnummer" />
+            <button type="submit" class="btn btn-success">Skapa annonsör utifrån prenumerantuppgifter</button>
+        </form>
+    }
+    else if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <p style="color: red;">@ViewBag.ErrorMessage</p>
+    }
+</div>

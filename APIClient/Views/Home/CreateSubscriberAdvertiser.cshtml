@@ -1,0 +1,59 @@
+﻿@model APIClient.Models.PrenumerantModel
+
+@{
+    ViewData["Title"] = "Skapa annonsör utifrån prenumerantuppgifter";
+}
+
+<div class="container">
+    <h2>Skapa annonsör utifrån prenumerantuppgifter</h2>
+
+    <form asp-controller="Home" asp-action="CreateSubscriberAdvertiser" method="post">
+        <div class="form-group">
+            <label asp-for="Fornamn">Förnamn:</label>
+            <input type="text" id="fornamn" name="fornamn" value="@Model.Fornamn" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Efternamn">Efternamn:</label>
+            <input type="text" id="efternamn" name="efternamn" value="@Model.Efternamn" class="form-control" />
+        </div>
+        
+        <div class="form-group">
+            <label asp-for="Telefonnummer">Telefonnummer:</label>
+            <input type="text" id="telefonnummer" name="telefonnummer" value="@Model.Telefonnummer" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Utdelningsadress">Utdelningsadress:</label>
+            <input type="text" id="utdelningsadress" name="utdelningsadress" value="@Model.Utdelningsadress" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Postnummer">Postnummer:</label>
+            <input type="text" id="postnummer" name="postnummer" value="@Model.Postnummer" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Ort">Ort:</label>
+            <input type="text" id="ort" name="ort" value="@Model.Ort" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Skapa annonsör" class="btn btn-primary" style="background-color: green; color: white;" />
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+    {
+        <p style="color: green;">@ViewBag.SuccessMessage</p>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <p style="color: red;">@ViewBag.ErrorMessage</p>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.AnnonsButtonVisible) && ViewBag.AnnonsButtonVisible == "true")
+    {
+        <form asp-controller="Home" asp-action="CreateAd" method="get">
+            <input type="hidden" name="annonsorId" value="@ViewBag.AnnonsorId" />
+            <button type="submit" class="btn btn-success">Skapa annons</button>
+        </form>
+    }
+</div>

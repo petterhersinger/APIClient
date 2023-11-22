@@ -1,0 +1,33 @@
+﻿@model List<AnnonsModel>
+
+@{
+    ViewData["Title"] = "Lista med Annonser";
+}
+
+<h2>Lista med Annonser</h2>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Varans Pris</th>
+            <th>Innehåll</th>
+            <th>Rubrik</th>
+            <th>Annonspris</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var annons in Model)
+        {
+            <tr>
+                <td>@annons.AnnonsId</td>
+                <td>@annons.VaransPris</td>
+                <td>@annons.Innehall</td>
+                <td>@annons.Rubrik</td>
+                <td>@annons.Pris</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

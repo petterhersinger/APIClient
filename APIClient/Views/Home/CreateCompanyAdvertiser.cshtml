@@ -1,0 +1,59 @@
+﻿@model APIClient.Models.AnnonsorModel
+
+@{
+    ViewData["Title"] = "Skapa annonsör för företag";
+}
+
+<div class="container">
+    <h2>Skapa annonsör för företag</h2>
+
+    <form asp-controller="Home" asp-action="CreateCompanyAdvertiser" method="post">
+        <div class="form-group">
+            <label asp-for="Namn">Företagsnamn:</label>
+            <input asp-for="Namn" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Organisationsnummer">Organisationsnummer:</label>
+            <input asp-for="Organisationsnummer" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Telefonnummer">Telefonnummer:</label>
+            <input asp-for="Telefonnummer" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Utdelningsadress">Utdelningsadress:</label>
+            <input asp-for="Utdelningsadress" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Postnummer">Postnummer:</label>
+            <input asp-for="Postnummer" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Ort">Ort:</label>
+            <input asp-for="Ort" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Fakturaadress">Fakturaadress:</label>
+            <input asp-for="Fakturaadress" class="form-control" required />
+        </div>
+
+        <input type="hidden" asp-for="ForetagsAnnonsor" value="true" />
+
+        <div class="form-group">
+            <input type="submit" value="Skapa annonsör för företag" class="btn btn-primary" style="background-color: green; color: white;" />
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(ViewData["SuccessMessage"] as string))
+    {
+        <p style="color: green;">@ViewData["SuccessMessage"]</p>
+        <div class="form-group">
+            <a asp-controller="Home" asp-action="CreateAd" asp-route-annonsorId="@Model.AnnonsorId" class="btn btn-success">Skapa annons</a>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+    {
+        <p style="color: red;">@ViewData["ErrorMessage"]</p>
+    }
+</div>

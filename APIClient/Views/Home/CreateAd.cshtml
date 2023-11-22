@@ -1,0 +1,43 @@
+﻿@model APIClient.Models.AnnonsModel
+
+@{
+    ViewData["Title"] = "Skapa Annons";
+}
+
+<h2>Skapa Annons</h2>
+
+@if (!string.IsNullOrEmpty(ViewData["SuccessMessage"] as string))
+{
+    <div class="alert alert-success">
+        <p>@ViewData["SuccessMessage"]</p>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+{
+    <div class="alert alert-danger">
+        <p>@ViewData["ErrorMessage"]</p>
+    </div>
+}
+
+<form asp-controller="Home" asp-action="CreateAd" method="post">
+    <div class="form-group">
+        <input asp-for="AnnonsorId" type="hidden" value="@Model.AnnonsorId" />
+    </div>
+     <div class="form-group">
+         <label asp-for="VaransPris">Varans Pris:</label>
+         <input asp-for="VaransPris" class="form-control" />
+     </div>
+     <div class="form-group">
+         <label asp-for="Innehall">Innehåll:</label>
+         <textarea asp-for="Innehall" class="form-control"></textarea>
+     </div>
+     <div class="form-group">
+         <label asp-for="Rubrik">Rubrik:</label>
+         <input asp-for="Rubrik" class="form-control" />
+     </div>
+ 
+     <div class="form-group">
+         <button type="submit" class="btn btn-primary">Skapa Annons</button>
+     </div>
+ </form>
