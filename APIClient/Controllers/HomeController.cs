@@ -26,22 +26,19 @@ public class HomeController : Controller
             return RedirectToAction("Index");
         }
     }
+
     [HttpGet]
     public IActionResult CreateCompanyAdvertiser()
     {
         AnnonsorModel model = new AnnonsorModel();
         return View(model);
     }
-    
+
     [HttpGet]
     public IActionResult CreateSubscriberAdvertiser()
     {
-        return View("CreateSubscriberAdvertiser");
-    }
-
-    public IActionResult GetSubscriber()
-    {
-        return View("GetSubscriber");
+        AnnonsorModel model = new AnnonsorModel();
+        return View(model);
     }
 
     [HttpGet]
@@ -80,7 +77,7 @@ public class HomeController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<IActionResult> CreateSubscriberAdvertiser(int prenumerantId)
     {
         var prenumerantInfo = await GetPrenumerantById(prenumerantId);
@@ -96,17 +93,14 @@ public class HomeController : Controller
                 Utdelningsadress = prenumerantInfo.Utdelningsadress,
                 Postnummer = prenumerantInfo.Postnummer,
                 Ort = prenumerantInfo.Ort,
-                Fakturaadress = null,
-                Organisationsnummer = null
+                Fakturaadress = "",
+                Organisationsnummer = ""
             };
 
-            int result = await CreateAnnonsor(annonsor);
+            var result = await CreateAnnonsor(annonsor);
 
-            if (result > 0)
+            if (result is not null)
             {
-                HttpContext.Session.SetInt32("PrenumerantId", (int)annonsor.PrenumerantId);
-                var identifier = HttpContext.Session.GetInt32("PrenumerantId") ?? 0;
-                annonsor = await GetAnnonsorByPrenumerantId(identifier);
                 ViewBag.SuccessMessage = "Annonsör skapad!";
                 ViewBag.AnnonsButtonVisible = "true";
             }
@@ -116,7 +110,7 @@ public class HomeController : Controller
                 ViewBag.AnnonsButtonVisible = "false";
             }
 
-            return View("CreateSubscriberAdvertiser", prenumerantInfo);
+            return View(result);
         }
         else
         {
@@ -130,13 +124,10 @@ public class HomeController : Controller
         annonsor.ForetagsAnnonsor = true;
         annonsor.PrenumerantId = 0;
 
-        int result = await CreateAnnonsor(annonsor);
+        var result = await CreateAnnonsor(annonsor);
 
-        if (result > 0)
+        if (result is not null)
         {
-            HttpContext.Session.SetString("Organisationsnummer", annonsor.Organisationsnummer);
-            var identifier = HttpContext.Session.GetString("Organisationsnummer");
-            annonsor = await GetAnnonsorByOrganisationsnummer(identifier);
             ViewData["SuccessMessage"] = "Annonsör skapad utifrån företag!";
             ViewData["AnnonsButtonVisible"] = "true";
         }
@@ -146,10 +137,10 @@ public class HomeController : Controller
             ViewData["AnnonsButtonVisible"] = "false";
         }
 
-        return View("CreateCompanyAdvertiser", annonsor);
+        return View(result);
     }
 
-    private async Task<int> CreateAnnonsor(AnnonsorModel annonsor)
+    private async Task<AnnonsorModel> CreateAnnonsor(AnnonsorModel annonsor)
     {
         using (HttpClient client = new HttpClient())
         {
@@ -163,13 +154,14 @@ public class HomeController : Controller
             if (response.IsSuccessStatusCode)
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                return 1;
+                AnnonsorModel createdAnnonsor = JsonConvert.DeserializeObject<AnnonsorModel>(apiResponse);
+                return createdAnnonsor;
             }
             else
             {
                 string errorContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"API Error Content: {errorContent}");
-                return 0;
+                return null;
             }
         }
     }
@@ -179,36 +171,22 @@ public class HomeController : Controller
     {
         try
         {
-            var identifier = HttpContext.Session.GetString("Organisationsnummer");
+            var annonsorIdValue = HttpContext.Request.Query["annonsorId"];
 
-            if (string.IsNullOrEmpty(identifier))
+            if (int.TryParse(annonsorIdValue, out int annonsorId))
             {
-                ViewData["ErrorMessage"] = "Organisationsnummer not found.";
-                //ViewData["AnnonsId"] = 0;
-                return View("CreateAd");
-            }
-
-            AnnonsorModel annonsor = await GetAnnonsorByOrganisationsnummer(identifier);
-
-            if (annonsor != null)
-            {
-                AnnonsModel annonsModel = new AnnonsModel
-                {
-                    AnnonsorId = annonsor.AnnonsorId,
-                };
-                return View(annonsModel);
+                ViewBag.AnnonsorId = annonsorId;
+                return View(new AnnonsModel { AnnonsorId = annonsorId });
             }
             else
             {
-                ViewData["ErrorMessage"] = "Annonsor not found.";
-                ViewData["AnnonsId"] = 0;
+                ViewData["ErrorMessage"] = "Invalid AnnonsorId in query parameters.";
                 return View("CreateAd");
             }
         }
         catch (Exception ex)
         {
             ViewData["ErrorMessage"] = $"An error occurred: {ex.Message}";
-            ViewData["AnnonsId"] = 0;
             return View("CreateAd");
         }
     }
@@ -219,49 +197,21 @@ public class HomeController : Controller
     {
         try
         {
-            var identifier = HttpContext.Session.GetString("Organisationsnummer") ??
-                             HttpContext.Session.GetInt32("PrenumerantId")?.ToString();
-
-            if (string.IsNullOrEmpty(identifier))
+            if (annons.AnnonsorId <= 0)
             {
-                ViewData["ErrorMessage"] = "Identifier not found.";
-                ViewData["AnnonsId"] = 0;
+                ViewData["ErrorMessage"] = "Invalid AnnonsorId.";
                 return View("CreateAd");
             }
 
-            AnnonsorModel annonsor = int.TryParse(identifier, out _) ?
-                await GetAnnonsorByPrenumerantId(int.Parse(identifier)) :
-                await GetAnnonsorByOrganisationsnummer(identifier);
-
-            if (annonsor != null)
-            {
-                annons.AnnonsorId = annonsor.AnnonsorId;
-            }
-            else
-            {
-                ViewData["ErrorMessage"] = "Annonsor not found.";
-                ViewData["AnnonsId"] = 0;
-                return View("CreateAd");
-            }
-
-            /*int result = await InsertAnnons(new AnnonsModel
-            {
-                AnnonsorId = annons.AnnonsorId,
-                Rubrik = annons.Rubrik,
-                Innehall = annons.Innehall,
-                VaransPris = annons.VaransPris
-            });*/
             int result = await InsertAnnons(annons);
 
             if (result > 0)
             {
                 ViewData["SuccessMessage"] = "Annons skapad!";
-                //ViewData["AnnonsId"] = result;
             }
             else
             {
                 ViewData["ErrorMessage"] = "Problem med att skapa annons.";
-                //ViewData["AnnonsId"] = 0;
             }
 
             return View("CreateAd");
@@ -269,7 +219,6 @@ public class HomeController : Controller
         catch (Exception ex)
         {
             ViewData["ErrorMessage"] = $"Ett fel uppstod: {ex.Message}";
-            //ViewData["AnnonsId"] = 0;
             return View("CreateAd");
         }
     }
@@ -326,47 +275,6 @@ public class HomeController : Controller
             else
             {
                 return new List<AnnonsModel>();
-            }
-        }
-    }
-
-    public async Task<AnnonsorModel> GetAnnonsorByPrenumerantId(int prenumerantId)
-    {
-        using (HttpClient client = new HttpClient())
-        {
-            string apiUrl = $"http://localhost:5284/Annonsor/prenumerantId?prenumerantId={prenumerantId}";
-            HttpResponseMessage response = await client.GetAsync(apiUrl);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string apiResponse = await response.Content.ReadAsStringAsync();
-                AnnonsorModel annonsor = JsonConvert.DeserializeObject<AnnonsorModel>(apiResponse);
-                return annonsor;
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-
-    public async Task<AnnonsorModel> GetAnnonsorByOrganisationsnummer(string organisationsnummer)
-    {
-        using (HttpClient client = new HttpClient())
-        {
-            string apiUrl =
-                $"http://localhost:5284/Annonsor/organisationsnummer?organisationsnummer={organisationsnummer}";
-            HttpResponseMessage response = await client.GetAsync(apiUrl);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string apiResponse = await response.Content.ReadAsStringAsync();
-                AnnonsorModel annonsor = JsonConvert.DeserializeObject<AnnonsorModel>(apiResponse);
-                return annonsor;
-            }
-            else
-            {
-                return null;
             }
         }
     }

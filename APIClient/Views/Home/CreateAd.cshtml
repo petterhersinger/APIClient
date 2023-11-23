@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Skapa Annons";
+    var annonsorId = Context.Request.Query["annonsorId"];
+    ViewBag.AnnonsorId = annonsorId;
 }
 
 <h2>Skapa Annons</h2>
@@ -22,22 +24,21 @@
 
 <form asp-controller="Home" asp-action="CreateAd" method="post">
     <div class="form-group">
-        <input asp-for="AnnonsorId" type="hidden" value="@Model.AnnonsorId" />
+        <input asp-for="AnnonsorId" type="hidden" value="@ViewBag.AnnonsorId"/>
     </div>
-     <div class="form-group">
-         <label asp-for="VaransPris">Varans Pris:</label>
-         <input asp-for="VaransPris" class="form-control" />
-     </div>
-     <div class="form-group">
-         <label asp-for="Innehall">Innehåll:</label>
-         <textarea asp-for="Innehall" class="form-control"></textarea>
-     </div>
-     <div class="form-group">
-         <label asp-for="Rubrik">Rubrik:</label>
-         <input asp-for="Rubrik" class="form-control" />
-     </div>
- 
-     <div class="form-group">
-         <button type="submit" class="btn btn-primary">Skapa Annons</button>
-     </div>
- </form>
+    <div class="form-group">
+        <label asp-for="VaransPris">Varans Pris:</label>
+        <input asp-for="VaransPris" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Innehall">Innehåll:</label>
+        <textarea asp-for="Innehall" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Rubrik">Rubrik:</label>
+        <input asp-for="Rubrik" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Skapa Annons</button>
+    </div>
+</form>

@@ -223,3 +223,4 @@ C:\Users\pette\RiderProjects\APIClient\APIClient\obj\Debug\net8.0\refint\APIClie
 C:\Users\pette\RiderProjects\APIClient\APIClient\obj\Debug\net8.0\APIClient.pdb
 C:\Users\pette\RiderProjects\APIClient\APIClient\obj\Debug\net8.0\APIClient.genruntimeconfig.cache
 C:\Users\pette\RiderProjects\APIClient\APIClient\obj\Debug\net8.0\ref\APIClient.dll
+C:\Users\pette\RiderProjects\APIClient\APIClient\obj\Debug\net8.0\APIClient.sourcelink.json

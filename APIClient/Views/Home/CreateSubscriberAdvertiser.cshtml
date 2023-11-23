@@ -1,4 +1,4 @@
-﻿@model APIClient.Models.PrenumerantModel
+﻿@model APIClient.Models.AnnonsorModel
 
 @{
     ViewData["Title"] = "Skapa annonsör utifrån prenumerantuppgifter";
@@ -9,33 +9,33 @@
 
     <form asp-controller="Home" asp-action="CreateSubscriberAdvertiser" method="post">
         <div class="form-group">
-            <label asp-for="Fornamn">Förnamn:</label>
-            <input type="text" id="fornamn" name="fornamn" value="@Model.Fornamn" class="form-control" />
+            <label asp-for="Namn">Namn:</label>
+            <input asp-for="Namn" class="form-control"/>
         </div>
         <div class="form-group">
-            <label asp-for="Efternamn">Efternamn:</label>
-            <input type="text" id="efternamn" name="efternamn" value="@Model.Efternamn" class="form-control" />
+            <label asp-for="PrenumerantId">PrenumerantId:</label>
+            <input asp-for="PrenumerantId" class="form-control" required/>
         </div>
-        
         <div class="form-group">
             <label asp-for="Telefonnummer">Telefonnummer:</label>
-            <input type="text" id="telefonnummer" name="telefonnummer" value="@Model.Telefonnummer" class="form-control" />
+            <input asp-for="Telefonnummer" class="form-control"/>
         </div>
         <div class="form-group">
             <label asp-for="Utdelningsadress">Utdelningsadress:</label>
-            <input type="text" id="utdelningsadress" name="utdelningsadress" value="@Model.Utdelningsadress" class="form-control" />
+            <input asp-for="Utdelningsadress" class="form-control"/>
         </div>
         <div class="form-group">
             <label asp-for="Postnummer">Postnummer:</label>
-            <input type="text" id="postnummer" name="postnummer" value="@Model.Postnummer" class="form-control" />
+            <input asp-for="Postnummer" class="form-control"/>
         </div>
         <div class="form-group">
             <label asp-for="Ort">Ort:</label>
-            <input type="text" id="ort" name="ort" value="@Model.Ort" class="form-control" />
+            <input asp-for="Ort" class="form-control"/>
         </div>
-
+        <input asp-for="AnnonsorId" type="hidden" />
+        <input type="hidden" asp-for="ForetagsAnnonsor" value="false"/>
         <div class="form-group">
-            <input type="submit" value="Skapa annonsör" class="btn btn-primary" style="background-color: green; color: white;" />
+            <input type="submit" value="Skapa annonsör från prenumerant" class="btn btn-primary" style="background-color: green; color: white;"/>
         </div>
     </form>
 
@@ -52,7 +52,7 @@
     @if (!string.IsNullOrEmpty(ViewBag.AnnonsButtonVisible) && ViewBag.AnnonsButtonVisible == "true")
     {
         <form asp-controller="Home" asp-action="CreateAd" method="get">
-            <input type="hidden" name="annonsorId" value="@ViewBag.AnnonsorId" />
+            <input type="hidden" name="annonsorId" value="@Model.AnnonsorId"/>
             <button type="submit" class="btn btn-success">Skapa annons</button>
         </form>
     }
